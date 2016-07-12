@@ -1,4 +1,4 @@
-package server.demo2;
+package server.demo1;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -10,11 +10,11 @@ import java.net.Socket;
  * @author Administrator
  *
  */
-public class Server {
+public class Server2 {
 	ServerSocket serverSocket;
 
 	public static void main(String[] args) {
-		Server server = new Server();
+		Server2 server = new Server2();
 		server.start();
 	}
 
