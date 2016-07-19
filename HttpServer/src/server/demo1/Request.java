@@ -2,9 +2,13 @@ package server.demo1;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.StringTokenizer;
 
 /**
  * 封装request
@@ -18,7 +22,7 @@ public class Request {
 	// 请求资源
 	private String url;
 	// 请求参数
-	private Map<String, List<String>> parameterMapValue;
+	private Map<String, List<String>> parameterMapValues;
 
 	// 内部
 	public static final String CRLF = "\r\n";
@@ -28,7 +32,7 @@ public class Request {
 	public Request() {
 		method = "";
 		url = "";
-		parameterMapValue = new HashMap<>();
+		parameterMapValues = new HashMap<>();
 		requestInfo = "";
 	}
 
@@ -43,13 +47,6 @@ public class Request {
 		} catch (IOException e) {
 			return;
 		}
-	}
-	
-	public static void main(String[] args) {
-		System.out.println("\n".getBytes().length);
-		System.out.println("\r\n".getBytes().length);
-		System.out.println("a".getBytes().length);
-		System.out.println("你".getBytes().length);
 	}
 
 	// 分析头信息
@@ -83,5 +80,74 @@ public class Request {
 		}
 
 		// 2、将请求参数封装到map中
+		// 如果不存在请求参数
+		if (paramString.equals("")) {
+			return;
+		}
+		parseParams(paramString);
+	}
+
+	private void parseParams(String paramString) {
+		// 分割 将字符串转成数组
+		StringTokenizer token = new StringTokenizer(paramString, "&");
+		while (token.hasMoreTokens()) {
+			String keyValue = token.nextToken();
+			String[] keyValues = keyValue.split("=");
+			if (keyValues.length == 1) {
+				keyValues = Arrays.copyOf(keyValues, 2);
+				keyValues[1] = null;
+			}
+			String key = keyValues[0].trim();
+			String value = null == keyValues[1] ? null : decode(keyValues[1].trim(), "GBK");
+			// 转换成Map
+			if (!parameterMapValues.containsKey(key)) {
+				parameterMapValues.put(key, new ArrayList<String>());
+			}
+
+			List<String> values = parameterMapValues.get(key);
+			values.add(value);
+		}
+	}
+
+	/**
+	 * 根据页面的name获取对应的多个值
+	 * 
+	 * @return
+	 */
+	public String[] getParameterValues(String name) {
+		List<String> values = null;
+		if ((values = parameterMapValues.get(name)) == null) {
+			return null;
+		} else {
+			return values.toArray(new String[0]);
+		}
+	}
+
+	/**
+	 * 根据页面的name获取对应的单个值
+	 * 
+	 * @return
+	 */
+	public String getParameter(String name) {
+		String[] values = getParameterValues(name);
+		if (null == values) {
+			return null;
+		}
+		return values[0];
+	}
+
+	/**
+	 * 解决中文
+	 * 
+	 * @param value
+	 * @param code
+	 * @return
+	 */
+	private String decode(String value, String code) {
+		try {
+			return java.net.URLDecoder.decode(value, code);
+		} catch (UnsupportedEncodingException e) {
+		}
+		return null;
 	}
 }
