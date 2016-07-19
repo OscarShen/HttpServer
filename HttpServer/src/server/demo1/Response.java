@@ -48,7 +48,7 @@ public class Response {
 	 * @param info
 	 * @return
 	 */
-	public Response print(String info) {
+	public Response println(String info) {
 		content.append(info).append(CRLF);
 		len += (info + CRLF).getBytes().length;
 		return this;

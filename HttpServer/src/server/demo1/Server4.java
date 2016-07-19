@@ -47,7 +47,7 @@ public class Server4 {
 			System.out.println(requestInfo);
 
 			Response rep = new Response(socket);
-			rep.print("<html><head><title>HTTP响应</title></head><body>Hello Tomcat!</body></html>");
+			rep.println("<html><head><title>HTTP响应</title></head><body>Hello Tomcat!</body></html>");
 			rep.pushToClient(200);
 
 		} catch (IOException e) {
