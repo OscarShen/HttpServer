@@ -20,6 +20,8 @@ public class Request {
 	// 请求方式
 	private String method;
 	// 请求资源
+	
+	@SuppressWarnings("unused")
 	private String url;
 	// 请求参数
 	private Map<String, List<String>> parameterMapValues;
@@ -41,7 +43,7 @@ public class Request {
 		this.is = is;
 		try {
 			byte[] data = new byte[20480];
-			int len = is.read(data);
+			int len = this.is.read(data);
 			requestInfo = new String(data, 0, len);
 			parseRequestInfo();
 		} catch (IOException e) {
